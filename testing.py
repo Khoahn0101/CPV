@@ -6,8 +6,8 @@
 # author: Xueyang Fu (fxy@stu.xmu.edu.cn)
 
 
-
-
+#jhfkjdsgjksdgklsdjglksdkgsdgkls
+#sgjkdsjfkldsjfkldsjklfdjf
 import os
 import training as Network
 import tensorflow as tf
