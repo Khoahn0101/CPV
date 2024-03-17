@@ -1,37 +1,46 @@
 import pickle
+import numpy as np
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import accuracy_score
-import numpy as np
+import os
 
-# Load data from pickle file
-with open("E:/CPV/data.pickle", 'rb') as file:
-    data_dict = pickle.load(file)
+# Load data
+data_dict = pickle.load(open("\data.pickle", 'rb'))
 
-# Assuming data_dict['data'] is a list of lists
-data = [np.array(i) for i in data_dict['data']]
+fixed_length = 42
+processed_data = []
+for sample in data_dict['data']:
+    if len(sample) < fixed_length:
+        # Pad with zeros if the length is less than the fixed length
+        processed_sample = np.pad(sample, (0, fixed_length - len(sample)), mode='constant')
+    else:
+        # Truncate if the length is greater than the fixed length
+        processed_sample = sample[:fixed_length]
+    processed_data.append(processed_sample)
 
-labels = np.array(data_dict['labels'])
+# Convert to NumPy array
+data = np.asarray(processed_data)
+labels = np.asarray(data_dict['labels'])
 
-# Split the data into training and testing sets
-x_train, x_test, y_train, y_test = train_test_split(data, labels, test_size=0.2, shuffle=True, stratify=labels)
+# Split data into train and test sets
+x_train, x_test, y_train, y_test = train_test_split(data, labels, test_size=0.3, shuffle=True, stratify=labels)
 
-# Assuming x_train is a list of lists
-x_train = [np.array(i) for i in x_train]
-
-# Initialize and train the Random Forest model
+# Train RandomForestClassifier
 model = RandomForestClassifier()
 model.fit(x_train, y_train)
 
-# Predict labels for test data
+# Predict on test set
 y_predict = model.predict(x_test)
 
 # Calculate accuracy
 score = accuracy_score(y_predict, y_test)
 
-# Print accuracy
 print('{}% of samples were classified correctly!'.format(score * 100))
 
-# Save the trained model
-with open('model.p', 'wb') as f:
-    pickle.dump(model, f)
+# Save the model in the specified directory
+pickle_file_path = os.path.join('\Dataset", 'model.p')  # Set the model file path in the specified directory
+with open(pickle_file_path, 'wb') as f:
+    pickle.dump({'model': model}, f)
+
+print("Model file saved to:", pickle_file_path)
