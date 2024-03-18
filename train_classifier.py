@@ -6,7 +6,7 @@ from sklearn.metrics import accuracy_score
 import os
 
 # Load data
-data_dict = pickle.load(open("\data.pickle", 'rb'))
+data_dict = pickle.load(open("E:\CPV\Handsign\data.pickle", 'rb'))
 
 fixed_length = 42
 processed_data = []
@@ -39,7 +39,7 @@ score = accuracy_score(y_predict, y_test)
 print('{}% of samples were classified correctly!'.format(score * 100))
 
 # Save the model in the specified directory
-pickle_file_path = os.path.join('\Dataset", 'model.p')  # Set the model file path in the specified directory
+pickle_file_path = os.path.join("E:\\CPV\\Dataset", 'model.p')  # Set the model file path in the specified directory
 with open(pickle_file_path, 'wb') as f:
     pickle.dump({'model': model}, f)
 
