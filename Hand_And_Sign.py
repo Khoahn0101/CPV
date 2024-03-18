@@ -5,10 +5,10 @@ import numpy as np
 
 # Load the trained model for face recognition
 face_recognizer = cv2.face.LBPHFaceRecognizer_create()
-face_recognizer.read(r"E:\CPV\Face\trainingData.yml")
+face_recognizer.read(r"Face\trainingData.yml")
 
 # Load the trained model for sign language gesture recognition
-model_dict = pickle.load(open("E:\CPV\Dataset\model.p", 'rb'))
+model_dict = pickle.load(open("\model.p", 'rb'))
 model = model_dict['model']
 
 # Initialize MediaPipe Hands
