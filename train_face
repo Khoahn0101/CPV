@@ -1,0 +1,55 @@
+import cv2
+import numpy as np
+import os
+
+def face_detection(gray_img):
+    face_cascade = cv2.CascadeClassifier(cv2.data.haarcascades + 'haarcascade_frontalface_default.xml')
+    faces = face_cascade.detectMultiScale(gray_img, scaleFactor=1.2, minNeighbors=5)
+    return faces
+
+def labels_for_training_data(directory):
+    faces = []
+    face_ids = []
+
+    for path, subdirnames, filenames in os.walk(directory):
+        for filename in filenames:
+            if filename.startswith("."):
+                print("Skipping system file") 
+                continue
+
+            id = os.path.basename(path) 
+            img_path = os.path.join(path, filename) 
+            print("img_path:", img_path)
+            print("id:", id)
+            gray_img = cv2.imread(img_path, cv2.IMREAD_GRAYSCALE) 
+            if gray_img is None:
+                print("Image not loaded properly")
+                continue
+            faces_rect = face_detection(gray_img)
+            if len(faces_rect) != 1:
+                continue 
+            (x, y, w, h) = faces_rect[0] 
+            roi_gray = gray_img[y:y + w, x:x + h] 
+            faces.append(roi_gray)
+            face_ids.append(int(id))
+    return faces, face_ids
+
+def train_classifier(faces, face_ids):
+    recognizer = cv2.face.LBPHFaceRecognizer_create()
+    recognizer.train(faces, np.array(face_ids))
+    return recognizer
+
+if __name__ == "__main__":
+    train_data_folder = r'\Face\Data'
+
+    # Training
+    print("Preparing data...")
+    faces, face_ids = labels_for_training_data(train_data_folder)
+    print("Training classifier...")
+    face_recognizer = train_classifier(faces, face_ids)
+    print("Training completed.")
+
+    # Saving the trained model
+    model_path = r'\trainingData.yml'
+    face_recognizer.save(model_path)
+    print("Model saved to:", model_path)
